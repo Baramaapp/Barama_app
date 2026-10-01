@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar Empresa | Inversiones Barama</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+</head>
+<body>
+
+    <nav style="background-color: #1a252f; padding: 10px; text-align: center; margin-bottom: 20px;">
+        <a href="{{ url_for('home') }}" style="color: white; text-decoration: none; font-weight: bold; margin: 0 15px;">🏠 Reportar Falla</a>
+        <a href="{{ url_for('login_admin') }}" style="color: white; text-decoration: none; font-weight: bold; margin: 0 15px;">🔒 Panel Admin</a>
+    </nav>
+
+    <div style="max-width: 400px; margin: 30px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
+        <h2 style="text-align: center;">🏢 Registrar Empresa</h2>
+
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% if mensajes %}
+                {% for categoria, mensaje in mensajes %}
+                    <div style="padding: 10px; margin-bottom: 15px; text-align: center; border-radius: 4px; background-color: {% if categoria == 'success' %}#d4edda{% else %}#f8d7da{% endif %}; color: {% if categoria == 'success' %}#155724{% else %}#721c24{% endif %};">
+                        {{ mensaje }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('registrar_empresa') }}" method="POST">
+            <input type="text" name="rif" placeholder="RIF (Ej: J-12345678-0)" style="width: 94%; padding: 10px; margin-bottom: 10px;">
+            <input type="text" name="nombre" placeholder="Nombre de la Empresa" required style="width: 94%; padding: 10px; margin-bottom: 10px;">
+            <input type="text" name="contacto" placeholder="Persona de Contacto" style="width: 94%; padding: 10px; margin-bottom: 10px;">
+            <input type="text" name="telefono" placeholder="Teléfono" style="width: 94%; padding: 10px; margin-bottom: 10px;">
+            <input type="text" name="direccion" placeholder="Dirección / Ubicación" style="width: 94%; padding: 10px; margin-bottom: 10px;">
+
+            <button type="submit" style="width: 100%; padding: 10px; background-color: #28a745; color: white; border: none; font-weight: bold; border-radius: 4px; cursor: pointer;">
+                Guardar Empresa
+            </button>
+        </form>
+    </div>
+
+</body>
+</html>

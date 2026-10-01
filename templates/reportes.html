@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Reportes Internos | Inversiones Barama</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; }
+        .header-panel { display: flex; justify-content: space-between; align-items: center; background: #1a252f; color: white; padding: 15px 25px; border-radius: 8px; margin-bottom: 20px; }
+        .tabla-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #34495e; color: white; }
+        tr:hover { background-color: #f1f1f1; }
+        .badge { padding: 5px 10px; border-radius: 4px; font-weight: bold; font-size: 12px; display: inline-block; }
+        .badge-pendiente { background-color: #ffeaa7; color: #d63031; }
+        .badge-en-proceso { background-color: #74b9ff; color: #0984e3; }
+        .badge-resuelto { background-color: #55efc4; color: #00b894; }
+        .btn-accion { text-decoration: none; padding: 5px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-right: 3px; display: inline-block; }
+        .btn-estado { background-color: #e2e8f0; color: #2d3748; }
+        .btn-eliminar { background-color: #ff7675; color: white; }
+        .form-busqueda { display: flex; gap: 10px; margin-bottom: 15px; }
+        .form-busqueda input { padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; flex: 1; max-width: 300px; }
+        .form-busqueda button { padding: 8px 15px; background: #0984e3; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="header-panel">
+        <div>
+            <h2 style="margin: 0;">??? Panel de Control de Mantenimiento</h2>
+            <small>Uso Exclusivo Interno - Inversiones Barama C.A.</small>
+        </div>
+        <div>
+            <a href="{{ url_for('home') }}" style="color: white; text-decoration: none; background: #2d3436; padding: 8px 15px; border-radius: 4px; font-weight: bold;">?? Volver al Inicio</a>
+        </div>
+    </div>
+
+    <div class="tabla-container">
+        <!-- Buscador por Empresa -->
+        <form method="GET" action="{{ url_for('ver_reportes') }}" class="form-busqueda">
+            <input type="text" name="busqueda" value="{{ busqueda }}" placeholder="?? Buscar por Empresa...">
+            <button type="submit">Buscar</button>
+            {% if busqueda %}
+                <a href="{{ url_for('ver_reportes') }}" style="padding: 8px 12px; background: #b2bec3; color: black; text-decoration: none; border-radius: 4px; align-self: center;">Limpiar Filtro</a>
+            {% endif %}
+        </form>
+
+        <form action="{{ url_for('eliminar_masivo') }}" method="POST" onsubmit="return confirm('¿Está seguro de eliminar los reportes seleccionados?');">
+            <div style="margin-bottom: 10px; text-align: right;">
+                <button type="submit" style="background-color: #d63031; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer;">
+                    ??? Eliminar Seleccionados
+                </button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="select-all" onclick="toggleAll(this)"></th>
+                        <th>N° Reporte</th>
+                        <th>Empresa</th>
+                        <th>Fecha</th>
+                        <th>Operador</th>
+                        <th>Horómetro</th>
+                        <th>Falla Reportada</th>
+                        <th>Estatus</th>
+                        <th>Cambiar Estatus</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if lista %}
+                        {% for reg in lista %}
+                            <tr>
+                                <td><input type="checkbox" name="registro_id" value="{{ reg['id'] }}"></td>
+                                <td><strong>#{{ reg['id'] }}</strong></td>
+                                <td>{{ reg['empresa'] }}</td>
+                                <td>{{ reg['fecha'] | formato_fecha }}</td>
+                                <td>{{ reg['operador'] }}</td>
+                                <td>{{ reg['horometro'] if reg['horometro'] else 'N/A' }} hrs</td>
+                                <td style="max-width: 250px;">{{ reg['falla'] }}</td>
+                                <td>
+                                    {% if reg['estatus'] == 'Pendiente' %}
+                                        <span class="badge badge-pendiente">?? Pendiente</span>
+                                    {% elif reg['estatus'] == 'En Proceso' %}
+                                        <span class="badge badge-en-proceso">?? En Proceso</span>
+                                    {% else %}
+                                        <span class="badge badge-resuelto">?? Resuelto</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('actualizar_estatus', id=reg['id'], nuevo_estatus='Pendiente') }}" class="btn-accion btn-estado">?? Pend.</a>
+                                    <a href="{{ url_for('actualizar_estatus', id=reg['id'], nuevo_estatus='En Proceso') }}" class="btn-accion btn-estado">?? Proc.</a>
+                                    <a href="{{ url_for('actualizar_estatus', id=reg['id'], nuevo_estatus='Resuelto') }}" class="btn-accion btn-estado">?? Res.</a>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('eliminar_uno', id=reg['id']) }}" class="btn-accion btn-eliminar" onclick="return confirm('¿Eliminar reporte #{{ reg['id'] }}?');">???</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="10" style="text-align: center; color: #777; padding: 20px;">
+                                No se encontraron reportes registrados.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </form>
+    </div>
+
+    <script>
+        function toggleAll(source) {
+            checkboxes = document.getElementsByName('registro_id');
+            for(var i=0, n=checkboxes.length;i<n;i++) {
+                checkboxes[i].checked = source.checked;
+            }
+        }
+    </script>
+</body>
+</html>
