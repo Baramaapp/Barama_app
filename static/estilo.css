@@ -97,3 +97,25 @@ p{
     background: #f8f9fa;
 }
 .grupo-acciones a:hover { background: #e2e6ea; }
+.grupo-campo {
+  margin-bottom: 14px;
+}
+
+.etiqueta-reporte {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.selector-reporte {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  font-size: 1rem;
+  color: #111827;
+  background-color: #ffffff;
+  border: 1.5px solid #374151;
+  border-radius: 6px;
+}
