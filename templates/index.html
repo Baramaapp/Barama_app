@@ -8,9 +8,9 @@
 <body>
 
     <!-- Menú de Navegación -->
-<nav style="background-color: #1a252f; padding: 12px; text-align: center; margin-bottom: 20px;">
+<nav style="background-color: #1a252f; padding: 25px; text-align: center; margin-bottom: 20px;">
     <a href="{{ url_for('home') }}" style="color: white; text-decoration: none; font-weight: bold; margin: 0 15px;">🏠 Inicio / Reportar</a>
-    <a href="{{ url_for('registrar_empresa') }}" style="color: white; text-decoration: none; font-weight: bold; margin: 0 15px;">🏢 Registrar Empresa</a>
+    <a href="{{ url_for('registrar_empresa') }}" style="color: white; text-decoration: none; font-weight: bold; margin: 0 40px;">🏢 Registrar Empresa</a>
     <a href="{{ url_for('login_admin') }}" style="color: #f1c40f; text-decoration: none; font-weight: bold; margin: 0 15px;">📊 Panel Admin / Reportes</a>
 </nav>
 
@@ -21,7 +21,7 @@
         <div style="text-align:center;">
             <p>Reparacion y mantenimiento Venta de Repuestos Somos Multimarcas.</p>
             
-            <img src="{{ url_for('static', filename='imagenes/montacargaverde.jpg') }}" class="imagen-verde" alt="verde"><br>
+            <img src="{{ url_for('static', filename='imagenes/toyota.jpg') }}" class="imagen-verde" alt="verde"><br>
             <img src="{{ url_for('static', filename='imagenes/caterpila.jpg') }}" class="imagen-caterpila" alt="caterpillar">
             <img src="{{ url_for('static', filename='imagenes/transpaletas2.jpg') }}" class="imagen-transpaletas" alt="transpaleta">
             
@@ -80,8 +80,21 @@
             <input type="date" name="fecha" id="input_fecha" required style="width: 96%; padding: 10px; margin-bottom: 10px;">
             <input type="text" name="operador" placeholder="Operador" required style="width: 96%; padding: 10px; margin-bottom: 10px;">
             <input type="number" step="0.1" name="horometro" placeholder="Horas (Horómetro)" style="width: 96%; padding: 10px; margin-bottom: 10px;">
+			<div class="grupo-campo">
+			<label for="tipo_maquina" class="etiqueta-reporte">
+			Tipo de máquina a reportar
+			</label>
+			<select id="tipo_maquina" name="tipo_maquina" class="selector-reporte" required>
+			<option value="" selected disabled>Seleccione una opción</option>
+			<option value="Montacargas">Montacargas</option>
+			<option value="Transpaleta">Transpaleta</option>
+		</select>
+</div>
+			
+			
             <textarea name="falla" placeholder="¿Qué falla tiene?" style="width: 96%; height: 80px; padding: 10px; margin-bottom: 10px;"></textarea>
             
+			
             <button type="submit" style="width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; font-weight: bold; border-radius: 4px; cursor: pointer;">Enviar Reporte</button>
         </form>
     </div>
